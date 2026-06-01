@@ -5,7 +5,6 @@ import com.jcaa.usersmanagement.application.port.out.DeleteUserPort;
 import com.jcaa.usersmanagement.application.port.out.GetUserByIdPort;
 import com.jcaa.usersmanagement.application.service.dto.command.DeleteUserCommand;
 import com.jcaa.usersmanagement.application.service.mapper.UserApplicationMapper;
-import com.jcaa.usersmanagement.domain.exception.UserNotFoundException;
 import com.jcaa.usersmanagement.domain.valueobject.UserId;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -26,8 +25,12 @@ public final class DeleteUserService implements DeleteUserUseCase {
     validateCommand(command);
 
     final UserId userId = UserApplicationMapper.fromDeleteCommandToUserId(command);
-    ensureUserExists(userId);
-    deleteUserPort.delete(userId);
+
+    final boolean exists = getUserByIdPort.getById(userId).isPresent();
+    if (exists) {
+      deleteUserPort.delete(userId);
+    }
+    // Si no existe, la operacion es exitosa de todas formas (idempotencia)
   }
 
   private void validateCommand(final DeleteUserCommand command) {
@@ -35,11 +38,5 @@ public final class DeleteUserService implements DeleteUserUseCase {
     if (!violations.isEmpty()) {
       throw new ConstraintViolationException(violations);
     }
-  }
-
-  private void ensureUserExists(final UserId userId) {
-    getUserByIdPort
-        .getById(userId)
-        .orElseThrow(() -> UserNotFoundException.becauseIdWasNotFound(userId.value()));
   }
 }
