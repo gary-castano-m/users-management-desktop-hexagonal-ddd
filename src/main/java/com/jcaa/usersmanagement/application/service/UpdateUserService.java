@@ -16,6 +16,7 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Objects;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -38,10 +39,16 @@ public final class UpdateUserService implements UpdateUserUseCase {
     ensureEmailIsNotTakenByAnotherUser(newEmail, userId);
 
     final UserModel userToUpdate =
-        UserApplicationMapper.fromUpdateCommandToModel(command, current.getPassword());
+            UserApplicationMapper.fromUpdateCommandToModel(command, current.getPassword());
+
+    final boolean dataChanged = hasDataChanged(current, userToUpdate);
+
     final UserModel updatedUser = updateUserPort.update(userToUpdate);
 
-    emailNotificationService.notifyUserUpdated(updatedUser);
+    // Solo notifica si los datos realmente cambiaron — garantiza idempotencia del PUT
+    if (dataChanged) {
+      emailNotificationService.notifyUserUpdated(updatedUser);
+    }
 
     return updatedUser;
   }
@@ -55,18 +62,28 @@ public final class UpdateUserService implements UpdateUserUseCase {
 
   private UserModel findExistingUserOrFail(final UserId userId) {
     return getUserByIdPort
-        .getById(userId)
-        .orElseThrow(() -> UserNotFoundException.becauseIdWasNotFound(userId.value()));
+            .getById(userId)
+            .orElseThrow(() -> UserNotFoundException.becauseIdWasNotFound(userId.value()));
   }
 
-  private void ensureEmailIsNotTakenByAnotherUser(final UserEmail newEmail, final UserId ownerId) {
+  private void ensureEmailIsNotTakenByAnotherUser(
+          final UserEmail newEmail, final UserId ownerId) {
     getUserByEmailPort
-        .getByEmail(newEmail)
-        .ifPresent(
-            found -> {
-              if (!found.getId().equals(ownerId)) {
-                throw UserAlreadyExistsException.becauseEmailAlreadyExists(newEmail.value());
-              }
-            });
+            .getByEmail(newEmail)
+            .ifPresent(
+                    found -> {
+                      if (!found.getId().equals(ownerId)) {
+                        throw UserAlreadyExistsException.becauseEmailAlreadyExists(newEmail.value());
+                      }
+                    });
+  }
+
+
+  private boolean hasDataChanged(final UserModel current, final UserModel updated) {
+    return !Objects.equals(current.getName(), updated.getName())
+            || !Objects.equals(current.getEmail(), updated.getEmail())
+            || !Objects.equals(current.getRole(), updated.getRole())
+            || !Objects.equals(current.getStatus(), updated.getStatus())
+            || !Objects.equals(current.getPassword(), updated.getPassword());
   }
 }

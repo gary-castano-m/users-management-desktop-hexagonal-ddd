@@ -14,6 +14,7 @@ import com.jcaa.usersmanagement.domain.valueobject.AsignaturaNombre;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
+import java.util.Objects;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 
@@ -30,13 +31,17 @@ public final class UpdateAsignaturaService implements UpdateAsignaturaUseCase {
         validateCommand(command);
 
         final AsignaturaId asignaturaId = new AsignaturaId(command.id());
-        findExistingAsignaturaOrFail(asignaturaId);
+        final AsignaturaModel current = findExistingAsignaturaOrFail(asignaturaId);
 
         final AsignaturaNombre newNombre = new AsignaturaNombre(command.nombre());
         ensureNombreIsNotTakenByAnotherAsignatura(newNombre, asignaturaId);
 
         final AsignaturaModel asignaturaToUpdate =
                 AsignaturaApplicationMapper.fromUpdateCommandToModel(command);
+
+        if (!hasDataChanged(current, asignaturaToUpdate)) {
+            return current;
+        }
 
         return updateAsignaturaPort.update(asignaturaToUpdate);
     }
@@ -67,5 +72,17 @@ public final class UpdateAsignaturaService implements UpdateAsignaturaUseCase {
                                         newNombre.value());
                             }
                         });
+    }
+
+    private boolean hasDataChanged(final AsignaturaModel current, final AsignaturaModel updated) {
+        return !Objects.equals(current.getNombre(), updated.getNombre())
+                || !Objects.equals(current.getNombreCompleto(), updated.getNombreCompleto())
+                || !Objects.equals(current.getDescripcion(), updated.getDescripcion())
+                || !Objects.equals(current.getAreaConocimiento(), updated.getAreaConocimiento())
+                || !Objects.equals(current.getCarrera(), updated.getCarrera())
+                || !Objects.equals(current.getNumeroCreditos(), updated.getNumeroCreditos())
+                || !Objects.equals(current.getContenidoTematico(), updated.getContenidoTematico())
+                || !Objects.equals(current.getSemestre(), updated.getSemestre())
+                || !Objects.equals(current.getProfesor(), updated.getProfesor());
     }
 }
