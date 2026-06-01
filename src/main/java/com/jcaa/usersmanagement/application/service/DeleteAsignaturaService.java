@@ -5,7 +5,6 @@ import com.jcaa.usersmanagement.application.port.out.DeleteAsignaturaPort;
 import com.jcaa.usersmanagement.application.port.out.GetAsignaturaByIdPort;
 import com.jcaa.usersmanagement.application.service.dto.command.DeleteAsignaturaCommand;
 import com.jcaa.usersmanagement.application.service.mapper.AsignaturaApplicationMapper;
-import com.jcaa.usersmanagement.domain.exception.AsignaturaNotFoundException;
 import com.jcaa.usersmanagement.domain.valueobject.AsignaturaId;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -27,8 +26,11 @@ public final class DeleteAsignaturaService implements DeleteAsignaturaUseCase {
         final AsignaturaId asignaturaId =
                 AsignaturaApplicationMapper.fromDeleteCommandToAsignaturaId(command);
 
-        ensureAsignaturaExists(asignaturaId);
-        deleteAsignaturaPort.delete(asignaturaId);
+        final boolean exists = getAsignaturaByIdPort.getById(asignaturaId).isPresent();
+        if (exists) {
+            deleteAsignaturaPort.delete(asignaturaId);
+        }
+        // Si no existe, la operacion es exitosa de todas formas (idempotencia)
     }
 
     private void validateCommand(final DeleteAsignaturaCommand command) {
@@ -37,12 +39,5 @@ public final class DeleteAsignaturaService implements DeleteAsignaturaUseCase {
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
-    }
-
-    private void ensureAsignaturaExists(final AsignaturaId asignaturaId) {
-        getAsignaturaByIdPort
-                .getById(asignaturaId)
-                .orElseThrow(
-                        () -> AsignaturaNotFoundException.becauseIdWasNotFound(asignaturaId.value()));
     }
 }
