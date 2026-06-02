@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 public final class Main {
 
   private static final Logger log = LoggerFactory.getLogger(Main.class);
-  private static final int PORT = 8080;
+  private static final int PORT = 8081;
 
   public static void main(final String[] args) {
     log.info("Starting Users Management REST API...");

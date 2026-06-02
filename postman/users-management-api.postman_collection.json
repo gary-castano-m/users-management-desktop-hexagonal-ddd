@@ -1,0 +1,126 @@
+{
+  "info": {
+    "name": "Users Management API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "http://localhost:8081/api/users/login" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"Admin1234!\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Crear Usuario",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "http://localhost:8081/api/users" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"u-001\",\n  \"name\": \"John Arrieta\",\n  \"email\": \"john@example.com\",\n  \"password\": \"Pass1234!\",\n  \"role\": \"MEMBER\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar Usuarios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "http://localhost:8081/api/users" }
+          }
+        },
+        {
+          "name": "Obtener Usuario por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "http://localhost:8081/api/users/u-001" }
+          }
+        },
+        {
+          "name": "Actualizar Usuario",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "http://localhost:8081/api/users/u-001" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Arrieta Updated\",\n  \"email\": \"john@example.com\",\n  \"password\": \"\",\n  \"role\": \"ADMIN\",\n  \"status\": \"ACTIVE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar Usuario",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "http://localhost:8081/api/users/u-001" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Asignaturas",
+      "item": [
+        {
+          "name": "Crear Asignatura",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "http://localhost:8081/api/asignaturas" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"a-001\",\n  \"nombre\": \"POO\",\n  \"nombreCompleto\": \"Programacion Orientada a Objetos\",\n  \"descripcion\": \"Fundamentos de la programacion orientada a objetos\",\n  \"areaConocimiento\": \"INGENIERIAS\",\n  \"carrera\": \"Ingenieria de Sistemas\",\n  \"numeroCreditos\": 3,\n  \"contenidoTematico\": \"Clases, objetos, herencia, polimorfismo y encapsulamiento\",\n  \"semestre\": 2,\n  \"profesor\": \"Dr. Carlos Perez\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar Asignaturas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "http://localhost:8081/api/asignaturas" }
+          }
+        },
+        {
+          "name": "Obtener Asignatura por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "http://localhost:8081/api/asignaturas/a-001" }
+          }
+        },
+        {
+          "name": "Actualizar Asignatura",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "http://localhost:8081/api/asignaturas/a-001" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"POO\",\n  \"nombreCompleto\": \"Programacion Orientada a Objetos Avanzada\",\n  \"descripcion\": \"Fundamentos avanzados de la programacion orientada a objetos\",\n  \"areaConocimiento\": \"INGENIERIAS\",\n  \"carrera\": \"Ingenieria de Sistemas\",\n  \"numeroCreditos\": 4,\n  \"contenidoTematico\": \"Clases, objetos, herencia, polimorfismo, encapsulamiento y patrones de diseno\",\n  \"semestre\": 3,\n  \"profesor\": \"Dr. Carlos Perez\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar Asignatura",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "http://localhost:8081/api/asignaturas/a-001" }
+          }
+        }
+      ]
+    }
+  ]
+}
