@@ -1,4 +1,8 @@
 package com.jcaa.usersmanagement.infrastructure.entrypoint.rest.dto;
 
-public record UpdateUserRestRequest() {
-}
+public record UpdateUserRestRequest(
+        String name,
+        String email,
+        String password,
+        String role,
+        String status) {}
