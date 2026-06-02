@@ -290,9 +290,11 @@ src
 
 ## Autor
 
+Gary José Castaño Molina cod.7502420050
+
+Ingeniería de Software
+
 <p align="center">
   <img src="docs/images/img.png" alt="" width="250">
 </p>
-Gary José Castaño Molina
-Universidad de Cartagena
-Ingeniería de Software
+
