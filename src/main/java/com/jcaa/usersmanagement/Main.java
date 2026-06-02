@@ -22,6 +22,8 @@ public final class Main {
     container.userRestController().registerRoutes(app);
     container.asignaturaRestController().registerRoutes(app);
 
+    app.get("/", ctx -> ctx.result("Users Management API Running"));
+
     app.start(PORT);
 
     log.info("REST API running on http://localhost:{}", PORT);
